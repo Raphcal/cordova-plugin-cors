@@ -42,7 +42,7 @@
         if ([response isKindOfClass:NSHTTPURLResponse.class]) {
             NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
             statusCode = [NSNumber numberWithInteger:httpResponse.statusCode];
-            statusText = [BDFXhr statusTextForStatusCode:httpResponse.statusCode];
+            statusText = [RCAXMLHttpRequest statusTextForStatusCode:httpResponse.statusCode];
             
             NSDictionary *allHeaderFields = httpResponse.allHeaderFields;
             headers = allHeaderFields;
