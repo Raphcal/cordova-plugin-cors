@@ -36,8 +36,7 @@ interface XHRResponse {
     allResponseHeaders: string;
 }
 
-// TODO: Implement XMLHttpRequest instead of XMLHttpRequestEventTarget
-class XHR implements XMLHttpRequestEventTarget {
+class XHR implements XMLHttpRequest {
     UNSENT = 0;
     OPENED = 1;
     HEADERS_RECEIVED = 2;
@@ -49,10 +48,16 @@ class XHR implements XMLHttpRequestEventTarget {
         return this.responseText;
     }
     responseText: string = null;
-    responseXML: string = null;
+    responseXML: Document = null;
+
     // TODO: Support these.
     timeout = 60;
     withCredentials = false;
+    responseType: XMLHttpRequestResponseType = null;
+    responseURL: string = null;
+    upload: XMLHttpRequestUpload = null;
+    msCachingEnabled = () => false;
+    msCaching: string = null;
 
     get readyState(): number {
         return this._readyState;
@@ -102,12 +107,12 @@ class XHR implements XMLHttpRequestEventTarget {
         this.method = method;
     }
 
-    send(data: string) {
+    send(data?: Document | string | any) {
         if (this.readyState !== this.OPENED) {
             if (this.readyState === this.UNSENT) {
-                throw 'XHR is not opened';
+                throw new DOMException('State is UNSENT but it should be OPENED.', 'InvalidStateError');
             }
-            throw 'XHR was already sent';
+            throw new DOMException('The object is in an invalid state (should be OPENED).', 'InvalidStateError');
         }
         this.zone = Zone ? Zone.current : undefined;
         this.readyState = this.LOADING;
@@ -158,6 +163,12 @@ class XHR implements XMLHttpRequestEventTarget {
 
     addEventListener(eventName: keyof XHRListeners, listener: (event: Event | ProgressEvent) => void) {
         this.listeners[eventName].push(listener);
+    }
+
+    dispatchEvent(event: Event): boolean {
+        this.fireEvent(event.type as 'progress' | 'load' | 'loadstart' | 'loadend' | 'readystatechange' | 'error' | 'abort' | 'timeout',
+            event);
+        return true;
     }
 
     removeEventListener(eventName: keyof XHRListeners) {
