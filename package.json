@@ -10,8 +10,11 @@
   "maintainers": [
     {
       "email": "ddaeke-github@yahoo.fr",
-    "name": "Raphaël Calabro"
+      "name": "Raphaël Calabro"
     }
   ],
+  "devDependencies": {
+      "typescript": "^2.6.2"
+  },
   "readme": "ERROR: No README data found!"
 }

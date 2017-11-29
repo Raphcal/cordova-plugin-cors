@@ -111,9 +111,9 @@ class XHR implements XMLHttpRequest {
     send(data?: Document | string | any) {
         if (this.readyState !== this.OPENED) {
             if (this.readyState === this.UNSENT) {
-                throw new Error('State is UNSENT but it should be OPENED.'); //, 'InvalidStateError');
+                throw new DOMException('State is UNSENT but it should be OPENED.', 'InvalidStateError');
             }
-            throw new Error('The object is in an invalid state (should be OPENED).'); //, 'InvalidStateError');
+            throw new DOMException('The object is in an invalid state (should be OPENED).', 'InvalidStateError');
         }
         this.zone = Zone ? Zone.current : undefined;
         this.readyState = this.LOADING;

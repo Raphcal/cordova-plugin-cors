@@ -1,5 +1,5 @@
 var exec = require('cordova/exec');
-var XHR = (function () {
+var XHR = /** @class */ (function () {
     function XHR() {
         this.UNSENT = 0;
         this.OPENED = 1;
@@ -76,9 +76,9 @@ var XHR = (function () {
         var _this = this;
         if (this.readyState !== this.OPENED) {
             if (this.readyState === this.UNSENT) {
-                throw new Error('State is UNSENT but it should be OPENED.'); //, 'InvalidStateError');
+                throw new DOMException('State is UNSENT but it should be OPENED.', 'InvalidStateError');
             }
-            throw new Error('The object is in an invalid state (should be OPENED).'); //, 'InvalidStateError');
+            throw new DOMException('The object is in an invalid state (should be OPENED).', 'InvalidStateError');
         }
         this.zone = Zone ? Zone.current : undefined;
         this.readyState = this.LOADING;
