@@ -1,5 +1,4 @@
 var exec = require('cordova/exec');
-// TODO: Implement XMLHttpRequest instead of XMLHttpRequestEventTarget
 var XHR = (function () {
     function XHR() {
         this.UNSENT = 0;
@@ -14,6 +13,11 @@ var XHR = (function () {
         // TODO: Support these.
         this.timeout = 60;
         this.withCredentials = false;
+        this.responseType = null;
+        this.responseURL = null;
+        this.upload = null;
+        this.msCachingEnabled = function () { return false; };
+        this.msCaching = null;
         this.onprogress = null;
         this.onload = null;
         this.onloadstart = null;
@@ -47,6 +51,7 @@ var XHR = (function () {
         configurable: true
     });
     Object.defineProperty(XHR.prototype, "readyState", {
+        // ---
         get: function () {
             return this._readyState;
         },
@@ -71,9 +76,9 @@ var XHR = (function () {
         var _this = this;
         if (this.readyState !== this.OPENED) {
             if (this.readyState === this.UNSENT) {
-                throw 'XHR is not opened';
+                throw new Error('State is UNSENT but it should be OPENED.'); //, 'InvalidStateError');
             }
-            throw 'XHR was already sent';
+            throw new Error('The object is in an invalid state (should be OPENED).'); //, 'InvalidStateError');
         }
         this.zone = Zone ? Zone.current : undefined;
         this.readyState = this.LOADING;
@@ -117,6 +122,10 @@ var XHR = (function () {
     };
     XHR.prototype.addEventListener = function (eventName, listener) {
         this.listeners[eventName].push(listener);
+    };
+    XHR.prototype.dispatchEvent = function (event) {
+        this.fireEvent(event.type, event);
+        return true;
     };
     XHR.prototype.removeEventListener = function (eventName) {
         this.listeners[eventName] = [];
