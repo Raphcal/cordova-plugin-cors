@@ -98,7 +98,7 @@ var XHR = /** @class */ (function () {
             event.initEvent('error', true, false);
             _this.fireEvent('error', event);
             _this.readyState = _this.DONE;
-        }, 'CORS', 'send', [this.method, this.path, this.requestHeaders]);
+        }, 'CORS', 'send', [this.method, this.path, this.requestHeaders, data]);
     };
     XHR.prototype.abort = function () {
         // Ignored.
