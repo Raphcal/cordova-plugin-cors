@@ -135,7 +135,7 @@ class XHR implements XMLHttpRequest {
             event.initEvent('error', true, false);
             this.fireEvent('error', event);
             this.readyState = this.DONE;
-        }, 'CORS', 'send', [this.method, this.path, this.requestHeaders]);
+        }, 'CORS', 'send', [this.method, this.path, this.requestHeaders, data]);
     }
 
     abort() {

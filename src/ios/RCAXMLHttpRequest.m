@@ -25,9 +25,13 @@
     NSString *method = [command argumentAtIndex:0];
     NSString *path = [command argumentAtIndex:1];
     NSDictionary *headers = [command argumentAtIndex:2];
+    NSString *data = [command argumentAtIndex:3];
     
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:path]];
     [request setHTTPMethod:method];
+    if (![data isEqual:[NSNull null]]) {
+        [request setHTTPBody:[data dataUsingEncoding:NSUTF8StringEncoding]];
+    }
     [headers enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *obj, BOOL * _Nonnull stop) {
         [request setValue:obj forHTTPHeaderField:key];
     }];
