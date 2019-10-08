@@ -65,6 +65,9 @@ var XHR = /** @class */ (function () {
         configurable: true
     });
     XHR.prototype.open = function (method, path, async) {
+        if (!async) {
+            throw 'Synchronous requests are not supported';
+        }
         if (this.readyState !== this.UNSENT) {
             throw 'XHR is already opened';
         }
@@ -86,7 +89,7 @@ var XHR = /** @class */ (function () {
             _this.status = response.status;
             _this.statusText = response.statusText;
             _this.responseText = response.responseText;
-            _this.responseHeaders = response.headers;
+            _this.responseHeaders = response.responseHeaders;
             _this.allResponseHeaders = response.allResponseHeaders;
             _this.readyState = _this.DONE;
             var event = document.createEvent('Event');

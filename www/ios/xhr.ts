@@ -32,7 +32,7 @@ interface XHRResponse {
     status: number;
     statusText: string;
     responseText: string;
-    headers: {[header: string]: string};
+    responseHeaders: {[header: string]: string};
     allResponseHeaders: string;
 }
 
@@ -99,7 +99,10 @@ class XHR implements XMLHttpRequest {
 
     private zone: Zone;
 
-    open(method: 'DELETE' | 'GET' | 'HEAD' | 'OPTIONS' | 'POST' | 'PUT' | 'TRACE', path: string, async: boolean) {
+    open(method: 'DELETE' | 'GET' | 'HEAD' | 'OPTIONS' | 'POST' | 'PUT' | 'TRACE', path: string, async?: boolean) {
+        if (!async) {
+            throw 'Synchronous requests are not supported';
+        }
         if (this.readyState !== this.UNSENT) {
             throw 'XHR is already opened';
         }
@@ -122,7 +125,7 @@ class XHR implements XMLHttpRequest {
             this.status = response.status;
             this.statusText = response.statusText;
             this.responseText = response.responseText;
-            this.responseHeaders = response.headers;
+            this.responseHeaders = response.responseHeaders;
             this.allResponseHeaders = response.allResponseHeaders;
             this.readyState = this.DONE;
 
