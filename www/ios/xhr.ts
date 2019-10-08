@@ -99,10 +99,7 @@ class XHR implements XMLHttpRequest {
 
     private zone: Zone;
 
-    open(method: 'DELETE' | 'GET' | 'HEAD' | 'OPTIONS' | 'POST' | 'PUT' | 'TRACE', path: string, async?: boolean) {
-        if (!async) {
-            throw 'Synchronous requests are not supported';
-        }
+    open(method: 'DELETE' | 'GET' | 'HEAD' | 'OPTIONS' | 'POST' | 'PUT' | 'TRACE', path: string) {
         if (this.readyState !== this.UNSENT) {
             throw 'XHR is already opened';
         }

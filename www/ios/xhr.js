@@ -64,10 +64,7 @@ var XHR = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
-    XHR.prototype.open = function (method, path, async) {
-        if (!async) {
-            throw 'Synchronous requests are not supported';
-        }
+    XHR.prototype.open = function (method, path) {
         if (this.readyState !== this.UNSENT) {
             throw 'XHR is already opened';
         }
