@@ -1,0 +1,20 @@
+# Changelog
+All notable changes to this project will be documented in this file.
+
+## [1.0.3] - 2019-10-08
+### Fixed
+- Removed error thrown when giving a `false` value to the `async` param of `open()` to avoid regressions.
+
+## [1.0.2] - 2019-10-08
+### Added
+- Throwing an error when `async` parameter of `open()` is `false`.
+
+### Fixed
+- Fixed crash when accessing headers through `getResponseHeader()` method.
+
+## [1.0.1] - 2017-12-01
+### Added
+- POST data support.
+
+## [1.0.0] - 2017-07-10
+Initial version
