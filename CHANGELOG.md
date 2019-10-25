@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.0.4] - 2019-11-25
+### Fixed
+- Fixed `Zone is undefined` error for projects not using Zone.js.
+- Added missing readystate constants (UNSENT, OPENED, HEADERS_RECEIVED, LOADING, DONE) on XHR object.
+
 ## [1.0.3] - 2019-10-08
 ### Fixed
 - Removed error thrown when giving a `false` value to the `async` param of `open()` to avoid regressions.

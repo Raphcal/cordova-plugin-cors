@@ -80,7 +80,7 @@ var XHR = /** @class */ (function () {
             }
             throw new DOMException('The object is in an invalid state (should be OPENED).', 'InvalidStateError');
         }
-        this.zone = Zone ? Zone.current : undefined;
+        this.zone = typeof Zone !== 'undefined' ? Zone.current : undefined;
         this.readyState = this.LOADING;
         exec(function (response) {
             _this.status = response.status;
@@ -146,8 +146,13 @@ var XHR = /** @class */ (function () {
         if (!func) {
             return;
         }
-        this.zone ? this.zone.run(func, this, [event]) : func.bind(this)(event);
+        !!this.zone ? this.zone.run(func, this, [event]) : func.bind(this)(event);
     };
+    XHR.UNSENT = 0;
+    XHR.OPENED = 1;
+    XHR.HEADERS_RECEIVED = 2;
+    XHR.LOADING = 3;
+    XHR.DONE = 4;
     return XHR;
 }());
 module.exports = XHR;

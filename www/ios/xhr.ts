@@ -37,11 +37,18 @@ interface XHRResponse {
 }
 
 class XHR implements XMLHttpRequest {
-    UNSENT = 0;
-    OPENED = 1;
-    HEADERS_RECEIVED = 2;
-    LOADING = 3;
-    DONE = 4;
+    static readonly UNSENT = 0;
+    static readonly OPENED = 1;
+    static readonly HEADERS_RECEIVED = 2;
+    static readonly LOADING = 3;
+    static readonly DONE = 4;
+
+    readonly UNSENT = 0;
+    readonly OPENED = 1;
+    readonly HEADERS_RECEIVED = 2;
+    readonly LOADING = 3;
+    readonly DONE = 4;
+
     status = 0;
     statusText: string = null;
     get response(): any {
@@ -115,7 +122,7 @@ class XHR implements XMLHttpRequest {
             }
             throw new DOMException('The object is in an invalid state (should be OPENED).', 'InvalidStateError');
         }
-        this.zone = Zone ? Zone.current : undefined;
+        this.zone = typeof Zone !== 'undefined' ? Zone.current : undefined;
         this.readyState = this.LOADING;
 
         exec((response: XHRResponse) => {
@@ -193,7 +200,7 @@ class XHR implements XMLHttpRequest {
         if (!func) {
             return;
         }
-        this.zone ? this.zone.run(func, this, [event]) : func.bind(this)(event);
+        !!this.zone ? this.zone.run(func, this, [event]) : func.bind(this)(event);
     }
 }
 
