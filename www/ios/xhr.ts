@@ -86,7 +86,7 @@ class XHR implements XMLHttpRequest {
     onabort: (event: Event) => void = null;
     ontimeout: (event: ProgressEvent) => void = null;
 
-    private _readyState = this.UNSENT;
+    private _readyState = XMLHttpRequest.UNSENT;
     private path: string = null;
     private method: 'DELETE' | 'GET' | 'HEAD' | 'OPTIONS' | 'POST' | 'PUT' | 'TRACE' = null;
     private requestHeaders: {[header: string]: string} = {};
@@ -107,23 +107,23 @@ class XHR implements XMLHttpRequest {
     private zone: Zone;
 
     open(method: 'DELETE' | 'GET' | 'HEAD' | 'OPTIONS' | 'POST' | 'PUT' | 'TRACE', path: string) {
-        if (this.readyState !== this.UNSENT) {
+        if (this.readyState !== XMLHttpRequest.UNSENT) {
             throw 'XHR is already opened';
         }
-        this.readyState = this.OPENED;
+        this.readyState = XMLHttpRequest.OPENED;
         this.path = this.makeAbsolute(path);
         this.method = method;
     }
 
     send(data?: Document | string | any) {
-        if (this.readyState !== this.OPENED) {
-            if (this.readyState === this.UNSENT) {
+        if (this.readyState !== XMLHttpRequest.OPENED) {
+            if (this.readyState === XMLHttpRequest.UNSENT) {
                 throw new DOMException('State is UNSENT but it should be OPENED.', 'InvalidStateError');
             }
             throw new DOMException('The object is in an invalid state (should be OPENED).', 'InvalidStateError');
         }
         this.zone = typeof Zone !== 'undefined' ? Zone.current : undefined;
-        this.readyState = this.LOADING;
+        this.readyState = XMLHttpRequest.LOADING;
 
         exec((response: XHRResponse) => {
             this.status = response.status;
@@ -131,7 +131,7 @@ class XHR implements XMLHttpRequest {
             this.responseText = response.responseText;
             this.responseHeaders = response.responseHeaders;
             this.allResponseHeaders = response.allResponseHeaders;
-            this.readyState = this.DONE;
+            this.readyState = XMLHttpRequest.DONE;
 
             const event = document.createEvent('Event');
             event.initEvent('Load', false, false);
@@ -141,7 +141,7 @@ class XHR implements XMLHttpRequest {
             const event = document.createEvent('Event');
             event.initEvent('error', true, false);
             this.fireEvent('error', event);
-            this.readyState = this.DONE;
+            this.readyState = XMLHttpRequest.DONE;
         }, 'CORS', 'send', [this.method, this.path, this.requestHeaders, data]);
     }
 
@@ -203,5 +203,18 @@ class XHR implements XMLHttpRequest {
         !!this.zone ? this.zone.run(func, this, [event]) : func.bind(this)(event);
     }
 }
+
+const XHREventTarget = function () {
+    this.onload = null;
+    this.onloadstart = null;
+    this.onloadend = null;
+    this.onreadystatechange = null;
+    this.onerror = null;
+    this.onabort = null;
+    this.ontimeout = null;
+};
+XHREventTarget.prototype.addEventListener = XHR.prototype.addEventListener;
+XHREventTarget.prototype.removeEventListener = XHR.prototype.removeEventListener;
+window.XMLHttpRequestEventTarget = XHREventTarget;
 
 module.exports = XHR;
