@@ -36,7 +36,61 @@ interface XHRResponse {
     allResponseHeaders: string;
 }
 
-class XHR implements XMLHttpRequest {
+class XHREventTarget implements XMLHttpRequestEventTarget {
+    onprogress: (event: ProgressEvent) => void = null;
+    onload: (event: ProgressEvent) => void = null;
+    onloadstart: (event: ProgressEvent) => void = null;
+    onloadend: (event: ProgressEvent) => void = null;
+    onreadystatechange: (event: ProgressEvent) => void = null;
+    onerror: (event: ProgressEvent) => void = null;
+    onabort: (event: ProgressEvent) => void = null;
+    ontimeout: (event: ProgressEvent) => void = null;
+
+    private listeners: { [key: string]: ((event: Event | ProgressEvent) => void)[] } = {
+        progress: [],
+        load: [],
+        loadstart: [],
+        loadend: [],
+        readystatechange: [],
+        error: [],
+        abort: [],
+        timeout: []
+    };
+
+    private zone: Zone;
+    
+    addEventListener(eventName: keyof XHRListeners, listener: (event: Event | ProgressEvent) => void) {
+        this.listeners[eventName].push(listener);
+        if (typeof Zone !== 'undefined') {
+            this.zone = Zone.current;
+        }
+    }
+
+    dispatchEvent(event: Event): boolean {
+        this.fireEvent(event.type as keyof XHRListeners, event);
+        return true;
+    }
+
+    removeEventListener(eventName: keyof XHRListeners) {
+        this.listeners[eventName] = [];
+    }
+
+    private fireEvent(eventName: keyof XHRListeners, event: Event | ProgressEvent) {
+        this.call(this['on' + eventName], event);
+        for (const listener of this.listeners[eventName]) {
+            this.call(listener, event);
+        }
+    }
+
+    private call(func: Function, event: Event) {
+        if (!func) {
+            return;
+        }
+        !!this.zone ? this.zone.run(func, this, [event]) : func.call(this, event);
+    }
+}
+
+class XHR extends XHREventTarget implements XMLHttpRequest {
     static readonly UNSENT = 0;
     static readonly OPENED = 1;
     static readonly HEADERS_RECEIVED = 2;
@@ -72,19 +126,8 @@ class XHR implements XMLHttpRequest {
     }
     set readyState(readyState: number) {
         this._readyState = readyState;
-        const event = document.createEvent('Event');
-        event.initEvent('readystatechange', false, false);
-        this.fireEvent('readystatechange', event);
+        this.dispatchEvent(new ProgressEvent('readystatechange'));
     }
-
-    onprogress: (event: ProgressEvent) => void = null;
-    onload: (event: Event) => void = null;
-    onloadstart: (event: Event) => void = null;
-    onloadend: (event: ProgressEvent) => void = null;
-    onreadystatechange: (event: Event) => void = null;
-    onerror: (event: Event) => void = null;
-    onabort: (event: Event) => void = null;
-    ontimeout: (event: ProgressEvent) => void = null;
 
     private _readyState = XMLHttpRequest.UNSENT;
     private path: string = null;
@@ -92,19 +135,6 @@ class XHR implements XMLHttpRequest {
     private requestHeaders: {[header: string]: string} = {};
     private responseHeaders: {[header: string]: string} = {};
     private allResponseHeaders: string = null;
-
-    private listeners: { [key: string]: ((event: Event | ProgressEvent) => void)[] } = {
-        progress: [],
-        load: [],
-        loadstart: [],
-        loadend: [],
-        readystatechange: [],
-        error: [],
-        abort: [],
-        timeout: []
-    };
-
-    private zone: Zone;
 
     open(method: 'DELETE' | 'GET' | 'HEAD' | 'OPTIONS' | 'POST' | 'PUT' | 'TRACE', path: string) {
         if (this.readyState !== XMLHttpRequest.UNSENT) {
@@ -122,7 +152,6 @@ class XHR implements XMLHttpRequest {
             }
             throw new DOMException('The object is in an invalid state (should be OPENED).', 'InvalidStateError');
         }
-        this.zone = typeof Zone !== 'undefined' ? Zone.current : undefined;
         this.readyState = XMLHttpRequest.LOADING;
 
         exec((response: XHRResponse) => {
@@ -133,14 +162,10 @@ class XHR implements XMLHttpRequest {
             this.allResponseHeaders = response.allResponseHeaders;
             this.readyState = XMLHttpRequest.DONE;
 
-            const event = document.createEvent('Event');
-            event.initEvent('Load', false, false);
-            this.fireEvent('load', event);
-            this.fireEvent('loadend', event);
+            this.dispatchEvent(new ProgressEvent('load'));
+            this.dispatchEvent(new ProgressEvent('loadend'));
         }, (error) => {
-            const event = document.createEvent('Event');
-            event.initEvent('error', true, false);
-            this.fireEvent('error', event);
+            this.dispatchEvent(new ProgressEvent('error'));
             this.readyState = XMLHttpRequest.DONE;
         }, 'CORS', 'send', [this.method, this.path, this.requestHeaders, data]);
     }
@@ -169,52 +194,13 @@ class XHR implements XMLHttpRequest {
         return this.allResponseHeaders;
     }
 
-    addEventListener(eventName: keyof XHRListeners, listener: (event: Event | ProgressEvent) => void) {
-        this.listeners[eventName].push(listener);
-    }
-
-    dispatchEvent(event: Event): boolean {
-        this.fireEvent(event.type as 'progress' | 'load' | 'loadstart' | 'loadend' | 'readystatechange' | 'error' | 'abort' | 'timeout',
-            event);
-        return true;
-    }
-
-    removeEventListener(eventName: keyof XHRListeners) {
-        this.listeners[eventName] = [];
-    }
-
     private makeAbsolute(relativeUrl: string): string {
         var anchor = document.createElement('a');
         anchor.href = relativeUrl;
         return anchor.href;
     }
-
-    private fireEvent(eventName: keyof XHRListeners, event: Event | ProgressEvent) {
-        this.call(this['on' + eventName], event);
-        for (const listener of this.listeners[eventName]) {
-            this.call(listener, event);
-        }
-    }
-
-    private call(func: Function, event: Event) {
-        if (!func) {
-            return;
-        }
-        !!this.zone ? this.zone.run(func, this, [event]) : func.bind(this)(event);
-    }
 }
 
-const XHREventTarget = function () {
-    this.onload = null;
-    this.onloadstart = null;
-    this.onloadend = null;
-    this.onreadystatechange = null;
-    this.onerror = null;
-    this.onabort = null;
-    this.ontimeout = null;
-};
-XHREventTarget.prototype.addEventListener = XHR.prototype.addEventListener;
-XHREventTarget.prototype.removeEventListener = XHR.prototype.removeEventListener;
 window.XMLHttpRequestEventTarget = XHREventTarget;
 
 module.exports = XHR;

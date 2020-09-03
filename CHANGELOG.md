@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.0.6] - 2020-09-03
+### Changed
+- Properly divided `XMLHttpRequestEventTarget` and `XMLHttpRequest` responsabilities between `XHREventTarget` and `XHR`.
+
 ## [1.0.5] - 2020-09-02
 ### Fixed
 - Added a simple implementation of `XMLHttpRequestEventTarget` to fix a compatibility issue with Angular 10.

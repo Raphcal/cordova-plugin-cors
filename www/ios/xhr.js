@@ -1,23 +1,19 @@
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var exec = require('cordova/exec');
-var XHR = /** @class */ (function () {
-    function XHR() {
-        this.UNSENT = 0;
-        this.OPENED = 1;
-        this.HEADERS_RECEIVED = 2;
-        this.LOADING = 3;
-        this.DONE = 4;
-        this.status = 0;
-        this.statusText = null;
-        this.responseText = null;
-        this.responseXML = null;
-        // TODO: Support these.
-        this.timeout = 60;
-        this.withCredentials = false;
-        this.responseType = null;
-        this.responseURL = null;
-        this.upload = null;
-        this.msCachingEnabled = function () { return false; };
-        this.msCaching = null;
+var XHREventTarget = /** @class */ (function () {
+    function XHREventTarget() {
         this.onprogress = null;
         this.onload = null;
         this.onloadstart = null;
@@ -26,12 +22,6 @@ var XHR = /** @class */ (function () {
         this.onerror = null;
         this.onabort = null;
         this.ontimeout = null;
-        this._readyState = XMLHttpRequest.UNSENT;
-        this.path = null;
-        this.method = null;
-        this.requestHeaders = {};
-        this.responseHeaders = {};
-        this.allResponseHeaders = null;
         this.listeners = {
             progress: [],
             load: [],
@@ -42,6 +32,63 @@ var XHR = /** @class */ (function () {
             abort: [],
             timeout: []
         };
+    }
+    XHREventTarget.prototype.addEventListener = function (eventName, listener) {
+        this.listeners[eventName].push(listener);
+        if (typeof Zone !== 'undefined') {
+            this.zone = Zone.current;
+        }
+    };
+    XHREventTarget.prototype.dispatchEvent = function (event) {
+        this.fireEvent(event.type, event);
+        return true;
+    };
+    XHREventTarget.prototype.removeEventListener = function (eventName) {
+        this.listeners[eventName] = [];
+    };
+    XHREventTarget.prototype.fireEvent = function (eventName, event) {
+        this.call(this['on' + eventName], event);
+        for (var _i = 0, _a = this.listeners[eventName]; _i < _a.length; _i++) {
+            var listener = _a[_i];
+            this.call(listener, event);
+        }
+    };
+    XHREventTarget.prototype.call = function (func, event) {
+        if (!func) {
+            return;
+        }
+        !!this.zone ? this.zone.run(func, this, [event]) : func.call(this, event);
+    };
+    return XHREventTarget;
+}());
+var XHR = /** @class */ (function (_super) {
+    __extends(XHR, _super);
+    function XHR() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.UNSENT = 0;
+        _this.OPENED = 1;
+        _this.HEADERS_RECEIVED = 2;
+        _this.LOADING = 3;
+        _this.DONE = 4;
+        _this.status = 0;
+        _this.statusText = null;
+        _this.responseText = null;
+        _this.responseXML = null;
+        // TODO: Support these.
+        _this.timeout = 60;
+        _this.withCredentials = false;
+        _this.responseType = null;
+        _this.responseURL = null;
+        _this.upload = null;
+        _this.msCachingEnabled = function () { return false; };
+        _this.msCaching = null;
+        _this._readyState = XMLHttpRequest.UNSENT;
+        _this.path = null;
+        _this.method = null;
+        _this.requestHeaders = {};
+        _this.responseHeaders = {};
+        _this.allResponseHeaders = null;
+        return _this;
     }
     Object.defineProperty(XHR.prototype, "response", {
         get: function () {
@@ -57,9 +104,7 @@ var XHR = /** @class */ (function () {
         },
         set: function (readyState) {
             this._readyState = readyState;
-            var event = document.createEvent('Event');
-            event.initEvent('readystatechange', false, false);
-            this.fireEvent('readystatechange', event);
+            this.dispatchEvent(new ProgressEvent('readystatechange'));
         },
         enumerable: true,
         configurable: true
@@ -80,7 +125,6 @@ var XHR = /** @class */ (function () {
             }
             throw new DOMException('The object is in an invalid state (should be OPENED).', 'InvalidStateError');
         }
-        this.zone = typeof Zone !== 'undefined' ? Zone.current : undefined;
         this.readyState = XMLHttpRequest.LOADING;
         exec(function (response) {
             _this.status = response.status;
@@ -89,14 +133,10 @@ var XHR = /** @class */ (function () {
             _this.responseHeaders = response.responseHeaders;
             _this.allResponseHeaders = response.allResponseHeaders;
             _this.readyState = XMLHttpRequest.DONE;
-            var event = document.createEvent('Event');
-            event.initEvent('Load', false, false);
-            _this.fireEvent('load', event);
-            _this.fireEvent('loadend', event);
+            _this.dispatchEvent(new ProgressEvent('load'));
+            _this.dispatchEvent(new ProgressEvent('loadend'));
         }, function (error) {
-            var event = document.createEvent('Event');
-            event.initEvent('error', true, false);
-            _this.fireEvent('error', event);
+            _this.dispatchEvent(new ProgressEvent('error'));
             _this.readyState = XMLHttpRequest.DONE;
         }, 'CORS', 'send', [this.method, this.path, this.requestHeaders, data]);
     };
@@ -120,33 +160,10 @@ var XHR = /** @class */ (function () {
     XHR.prototype.getAllResponseHeaders = function () {
         return this.allResponseHeaders;
     };
-    XHR.prototype.addEventListener = function (eventName, listener) {
-        this.listeners[eventName].push(listener);
-    };
-    XHR.prototype.dispatchEvent = function (event) {
-        this.fireEvent(event.type, event);
-        return true;
-    };
-    XHR.prototype.removeEventListener = function (eventName) {
-        this.listeners[eventName] = [];
-    };
     XHR.prototype.makeAbsolute = function (relativeUrl) {
         var anchor = document.createElement('a');
         anchor.href = relativeUrl;
         return anchor.href;
-    };
-    XHR.prototype.fireEvent = function (eventName, event) {
-        this.call(this['on' + eventName], event);
-        for (var _i = 0, _a = this.listeners[eventName]; _i < _a.length; _i++) {
-            var listener = _a[_i];
-            this.call(listener, event);
-        }
-    };
-    XHR.prototype.call = function (func, event) {
-        if (!func) {
-            return;
-        }
-        !!this.zone ? this.zone.run(func, this, [event]) : func.bind(this)(event);
     };
     XHR.UNSENT = 0;
     XHR.OPENED = 1;
@@ -154,17 +171,6 @@ var XHR = /** @class */ (function () {
     XHR.LOADING = 3;
     XHR.DONE = 4;
     return XHR;
-}());
-var XHREventTarget = function () {
-    this.onload = null;
-    this.onloadstart = null;
-    this.onloadend = null;
-    this.onreadystatechange = null;
-    this.onerror = null;
-    this.onabort = null;
-    this.ontimeout = null;
-};
-XHREventTarget.prototype.addEventListener = XHR.prototype.addEventListener;
-XHREventTarget.prototype.removeEventListener = XHR.prototype.removeEventListener;
+}(XHREventTarget));
 window.XMLHttpRequestEventTarget = XHREventTarget;
 module.exports = XHR;
