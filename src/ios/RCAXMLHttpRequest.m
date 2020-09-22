@@ -25,12 +25,20 @@
     NSString *method = [command argumentAtIndex:0];
     NSString *path = [command argumentAtIndex:1];
     NSDictionary *headers = [command argumentAtIndex:2];
-    NSString *data = [command argumentAtIndex:3];
+    NSObject *data = [command argumentAtIndex:3];
     
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:path]];
     [request setHTTPMethod:method];
     if (![data isEqual:[NSNull null]]) {
-        [request setHTTPBody:[data dataUsingEncoding:NSUTF8StringEncoding]];
+        if ([data isKindOfClass:NSString.class]) {
+            [request setHTTPBody:[(NSString *)data dataUsingEncoding:NSUTF8StringEncoding]];
+        } else if ([data isKindOfClass:NSArray.class] && [@"multipart/form-data" isEqualToString:[headers objectForKey:@"Content-Type"]]) {
+            NSString *boundary = [RCAXMLHttpRequest boundary];
+            [headers setValue:[NSString stringWithFormat:@"multipart/form-data; charset=utf-8; boundary=%@", boundary] forKey:@"Content-Type"];
+            [request setHTTPBody:[RCAXMLHttpRequest httpBodyForMultipartFormData:(NSArray <NSDictionary *> *)data withBoundary:boundary]];
+        } else {
+            NSLog(@"Unsupported data type: %@", data.class);
+        }
     }
     [headers enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *obj, BOOL * _Nonnull stop) {
         [request setValue:obj forHTTPHeaderField:key];
@@ -75,6 +83,52 @@
                                              }] callbackId:command.callbackId];
     }];
     [task resume];
+}
+
++ (NSData *)httpBodyForMultipartFormData:(NSArray <NSDictionary *> *)formData withBoundary:(NSString *)boundary {
+    NSData *lineEnd = [@"\r\n" dataUsingEncoding:NSASCIIStringEncoding];
+
+    NSMutableData *body = [[NSMutableData alloc] init];
+    for (NSDictionary *entry in (NSArray <NSDictionary *> *)formData) {
+        NSString *key = [entry objectForKey:@"key"];
+        NSString *value = [entry objectForKey:@"value"];
+        NSString *type = [entry objectForKey:@"type"];
+        if ([@"file" isEqualToString:type]) {
+            NSData *data = [[NSData alloc] initWithBase64EncodedString:value options:0];
+            [body appendData:[[NSString stringWithFormat:@"--%@\r\n"
+                               "Content-Disposition: form-data; name=\"%@\"; filename=\"%@\"\r\n"
+                               "Content-Type: %@\r\n"
+                               "Content-Length: %lu\r\n"
+                               "\r\n",
+                               boundary,
+                               key, [entry objectForKey:@"fileName"], [entry objectForKey:@"mimeType"],
+                               (unsigned long)data.length] dataUsingEncoding:NSUTF8StringEncoding]];
+            [body appendData:data];
+            [body appendData:lineEnd];
+        }
+        else if ([@"string" isEqualToString:type]) {
+            NSData *data = [value dataUsingEncoding:NSUTF8StringEncoding];
+            [body appendData:[[NSString stringWithFormat:@"--%@\r\n"
+                               "Content-Disposition: form-data; name=\"%@\"\r\n"
+                               "Content-Type: text/plain; charset=utf-8\r\n"
+                               "Content-Length: %lu\r\n"
+                               "\r\n",
+                               boundary,
+                               key,
+                               (unsigned long)data.length] dataUsingEncoding:NSUTF8StringEncoding]];
+            [body appendData:data];
+            [body appendData:lineEnd];
+        }
+        else {
+            NSLog(@"Unsupported multipart type: %@", type);
+        }
+    }
+    [body appendData:[[NSString stringWithFormat:@"--%@--\r\n", boundary] dataUsingEncoding:NSASCIIStringEncoding]];
+    return body;
+}
+
++ (NSString *)boundary {
+    return [NSString stringWithFormat:@"rca-xhr-boundary-%ld-%u", (long)[NSDate timeIntervalSinceReferenceDate], arc4random() % 1000000];
 }
 
 + (NSString *)statusTextForStatusCode:(NSInteger)statusCode {
