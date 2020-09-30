@@ -126,7 +126,15 @@ var XHR = /** @class */ (function (_super) {
             throw new DOMException('The object is in an invalid state (should be OPENED).', 'InvalidStateError');
         }
         this.readyState = XMLHttpRequest.LOADING;
-        exec(function (response) {
+        var promise;
+        if (data instanceof FormData) {
+            this.requestHeaders['Content-Type'] = 'multipart/form-data';
+            promise = this.requestBodyWithFormData(data);
+        }
+        else {
+            promise = Promise.resolve(data);
+        }
+        promise.then(function (body) { return exec(function (response) {
             _this.status = response.status;
             _this.statusText = response.statusText;
             _this.responseText = response.responseText;
@@ -138,13 +146,13 @@ var XHR = /** @class */ (function (_super) {
         }, function (error) {
             _this.dispatchEvent(new ProgressEvent('error'));
             _this.readyState = XMLHttpRequest.DONE;
-        }, 'CORS', 'send', [this.method, this.path, this.requestHeaders, data]);
+        }, 'CORS', 'send', [_this.method, _this.path, _this.requestHeaders, body]); });
     };
     XHR.prototype.abort = function () {
         // Ignored.
     };
     XHR.prototype.overrideMimeType = function (mimeType) {
-        throw 'Not supported';
+        throw new Error('overrideMimeType method is not supported');
     };
     XHR.prototype.setRequestHeader = function (header, value) {
         if (value) {
@@ -164,6 +172,49 @@ var XHR = /** @class */ (function (_super) {
         var anchor = document.createElement('a');
         anchor.href = relativeUrl;
         return anchor.href;
+    };
+    XHR.prototype.toBase64 = function (dataURL) {
+        dataURL = dataURL.replace(/^data:.*?base64,/, '');
+        switch (dataURL.length % 4) {
+            case 2:
+                return dataURL + '==';
+            case 3:
+                return dataURL + '=';
+            default:
+                return dataURL;
+        }
+    };
+    XHR.prototype.requestBodyWithFormData = function (formData) {
+        var _this = this;
+        var promises = [];
+        formData.forEach(function (value, key) {
+            if (value instanceof File) {
+                promises.push(new Promise(function (resolve, reject) {
+                    var fileReader = new FileReader();
+                    fileReader.addEventListener('load', function () {
+                        resolve({
+                            type: 'file',
+                            key: key,
+                            value: _this.toBase64(fileReader.result),
+                            fileName: value.name,
+                            mimeType: value.type
+                        });
+                    });
+                    fileReader.addEventListener('error', function () {
+                        reject(fileReader.error);
+                    });
+                    fileReader.readAsDataURL(value);
+                }));
+            }
+            else {
+                promises.push(Promise.resolve({
+                    type: 'string',
+                    key: key,
+                    value: value
+                }));
+            }
+        });
+        return Promise.all(promises);
     };
     XHR.UNSENT = 0;
     XHR.OPENED = 1;

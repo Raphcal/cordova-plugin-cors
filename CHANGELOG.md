@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.1.0] - 2020-09-30
+### Added
+- Added support for `FormData` request body.
+- Added an Xcode project and CordovaLib headers to have better code completion when working on Objective-C files.
+
 ## [1.0.6] - 2020-09-03
 ### Changed
 - Properly divided `XMLHttpRequestEventTarget` and `XMLHttpRequest` responsabilities between `XHREventTarget` and `XHR`.

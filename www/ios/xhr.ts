@@ -36,6 +36,14 @@ interface XHRResponse {
     allResponseHeaders: string;
 }
 
+interface FormDataEntry {
+    type: 'string' | 'file';
+    key: string;
+    value: string;
+    fileName?: string;
+    mimeType?: string;
+}
+
 class XHREventTarget implements XMLHttpRequestEventTarget {
     onprogress: (event: ProgressEvent) => void = null;
     onload: (event: ProgressEvent) => void = null;
@@ -145,7 +153,7 @@ class XHR extends XHREventTarget implements XMLHttpRequest {
         this.method = method;
     }
 
-    send(data?: Document | string | any) {
+    send(data?: string | Document | FormData | ArrayBufferView | ArrayBuffer | Blob | URLSearchParams | ReadableStream<Uint8Array>) {
         if (this.readyState !== XMLHttpRequest.OPENED) {
             if (this.readyState === XMLHttpRequest.UNSENT) {
                 throw new DOMException('State is UNSENT but it should be OPENED.', 'InvalidStateError');
@@ -154,7 +162,15 @@ class XHR extends XHREventTarget implements XMLHttpRequest {
         }
         this.readyState = XMLHttpRequest.LOADING;
 
-        exec((response: XHRResponse) => {
+        let promise: Promise<string | Document | ArrayBufferView | ArrayBuffer | Blob | URLSearchParams | ReadableStream<Uint8Array> | FormDataEntry[]>;
+        if (data instanceof FormData) {
+            this.requestHeaders['Content-Type'] = 'multipart/form-data';
+            promise = this.requestBodyWithFormData(data);
+        } else {
+            promise = Promise.resolve(data);
+        }
+
+        promise.then(body => exec((response: XHRResponse) => {
             this.status = response.status;
             this.statusText = response.statusText;
             this.responseText = response.responseText;
@@ -167,7 +183,7 @@ class XHR extends XHREventTarget implements XMLHttpRequest {
         }, (error) => {
             this.dispatchEvent(new ProgressEvent('error'));
             this.readyState = XMLHttpRequest.DONE;
-        }, 'CORS', 'send', [this.method, this.path, this.requestHeaders, data]);
+        }, 'CORS', 'send', [this.method, this.path, this.requestHeaders, body]));
     }
 
     abort() {
@@ -175,7 +191,7 @@ class XHR extends XHREventTarget implements XMLHttpRequest {
     }
 
     overrideMimeType(mimeType: string) {
-        throw 'Not supported';
+        throw new Error('overrideMimeType method is not supported');
     }
 
     setRequestHeader(header: string, value?: string) {
@@ -198,6 +214,49 @@ class XHR extends XHREventTarget implements XMLHttpRequest {
         var anchor = document.createElement('a');
         anchor.href = relativeUrl;
         return anchor.href;
+    }
+
+    private toBase64(dataURL: string) {
+        dataURL = dataURL.replace(/^data:.*?base64,/, '');
+        switch (dataURL.length % 4) {
+            case 2:
+                return dataURL + '==';
+            case 3:
+                return dataURL + '=';
+            default:
+                return dataURL;
+        }
+    }
+
+    private requestBodyWithFormData(formData: FormData) {
+        const promises: Promise<FormDataEntry>[] = [];
+        formData.forEach((value, key) => {
+            if (value instanceof File) {
+                promises.push(new Promise((resolve, reject) => {
+                    const fileReader = new FileReader();
+                    fileReader.addEventListener('load', () => {
+                        resolve({
+                            type: 'file',
+                            key,
+                            value: this.toBase64(fileReader.result as string),
+                            fileName: value.name,
+                            mimeType: value.type
+                        });
+                    });
+                    fileReader.addEventListener('error', () => {
+                        reject(fileReader.error);
+                    });
+                    fileReader.readAsDataURL(value);
+                }));
+            } else {
+                promises.push(Promise.resolve({
+                    type: 'string',
+                    key,
+                    value
+                }));
+            }
+        });
+        return Promise.all(promises);
     }
 }
 
