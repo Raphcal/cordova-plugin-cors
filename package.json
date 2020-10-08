@@ -1,10 +1,16 @@
 {
   "name": "cordova-plugin-cors",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "author": {
     "email": "ddaeke-npmjs@yahoo.com",
     "name": "Raphaël Calabro"
   },
+  "contributors": [
+    {
+      "email": "rory.cn@gmail.com",
+      "name": "Rory Ye"
+    }
+  ],
   "description": "Allow CORS requests on iOS with WKWebView.",
   "keywords": [
     "cordova",
@@ -29,6 +35,9 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/Raphcal/cordova-plugin-cors"
+  },
+  "scripts": {
+    "prepublish": "tsc"
   },
   "devDependencies": {
       "typescript": "^2.6.2"

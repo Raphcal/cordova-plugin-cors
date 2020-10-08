@@ -1,9 +1,16 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.1.1] - 2020-10-08
+### Added
+- `User-Agent` HTTP header is now set by default to Cordova user agent.
+
+### Changed
+- Removed the compiled version of `xhr.ts` from the repository. Build is now done before publishing a new version.
+
 ## [1.1.0] - 2020-09-30
 ### Added
-- Added support for `FormData` request body.
+- Added support for `FormData` request body, closes [#2](https://github.com/Raphcal/cordova-plugin-cors/issues/2).
 - Added an Xcode project and CordovaLib headers to have better code completion when working on Objective-C files.
 
 ## [1.0.6] - 2020-09-03
@@ -19,7 +26,7 @@ All notable changes to this project will be documented in this file.
 
 ## [1.0.4] - 2019-11-25
 ### Fixed
-- Fixed `Zone is undefined` error for projects not using Zone.js.
+- Fixed `Zone is undefined` error for projects not using Zone.js, closes [#1](https://github.com/Raphcal/cordova-plugin-cors/issues/1).
 - Added missing readystate constants (UNSENT, OPENED, HEADERS_RECEIVED, LOADING, DONE) on XHR object.
 
 ## [1.0.3] - 2019-10-08
