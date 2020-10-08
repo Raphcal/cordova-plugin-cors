@@ -85,7 +85,7 @@ var XHR = /** @class */ (function (_super) {
         _this._readyState = XMLHttpRequest.UNSENT;
         _this.path = null;
         _this.method = null;
-        _this.requestHeaders = {"User-Agent": navigator.userAgent};
+        _this.requestHeaders = {'User-Agent': navigator.userAgent};
         _this.responseHeaders = {};
         _this.allResponseHeaders = null;
         return _this;

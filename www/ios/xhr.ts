@@ -140,7 +140,7 @@ class XHR extends XHREventTarget implements XMLHttpRequest {
     private _readyState = XMLHttpRequest.UNSENT;
     private path: string = null;
     private method: 'DELETE' | 'GET' | 'HEAD' | 'OPTIONS' | 'POST' | 'PUT' | 'TRACE' = null;
-    private requestHeaders: {[header: string]: string} = {"User-Agent": navigator.userAgent};
+    private requestHeaders: {[header: string]: string} = {'User-Agent': navigator.userAgent};
     private responseHeaders: {[header: string]: string} = {};
     private allResponseHeaders: string = null;
 
