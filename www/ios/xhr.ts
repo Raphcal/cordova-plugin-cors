@@ -216,36 +216,29 @@ class XHR extends XHREventTarget implements XMLHttpRequest {
         return anchor.href;
     }
 
-    private toBase64(dataURL: string) {
-        dataURL = dataURL.replace(/^data:.*?base64,/, '');
-        switch (dataURL.length % 4) {
-            case 2:
-                return dataURL + '==';
-            case 3:
-                return dataURL + '=';
-            default:
-                return dataURL;
-        }
-    }
-
+    /**
+     * Creates the request body using the given form data.
+     *
+     * @param formData Form data to send.
+     */
     private requestBodyWithFormData(formData: FormData) {
         const promises: Promise<FormDataEntry>[] = [];
         formData.forEach((value, key) => {
-            if (value instanceof File) {
+            if (XHR.isFile(value)) {
                 promises.push(new Promise((resolve, reject) => {
                     const fileReader = new FileReader();
-                    fileReader.addEventListener('load', () => {
+                    fileReader.onload = () => {
                         resolve({
                             type: 'file',
                             key,
-                            value: this.toBase64(fileReader.result as string),
+                            value: XHR.toBase64(fileReader.result as string),
                             fileName: value.name,
                             mimeType: value.type
                         });
-                    });
-                    fileReader.addEventListener('error', () => {
+                    };
+                    fileReader.onerror = () => {
                         reject(fileReader.error);
-                    });
+                    };
                     fileReader.readAsDataURL(value);
                 }));
             } else {
@@ -257,6 +250,37 @@ class XHR extends XHREventTarget implements XMLHttpRequest {
             }
         });
         return Promise.all(promises);
+    }
+
+    /**
+     * Convert the given data URL into a properly encoded base64 string.
+     * Removes the `data:` prefixe and adds the padding.
+     *
+     * @param dataURL Data URL to convert.
+     */
+    private static toBase64(dataURL: string) {
+        dataURL = dataURL.replace(/^data:.*?base64,/, '');
+        switch (dataURL.length % 4) {
+            case 2:
+                return dataURL + '==';
+            case 3:
+                return dataURL + '=';
+            default:
+                return dataURL;
+        }
+    }
+
+    /**
+     * Returns `true` if `value` is an instance of `File`.
+     * Not using `instanceof` because of Cordova custom File type.
+     * @see https://github.com/Raphcal/cordova-plugin-cors/issues/5
+     *
+     * @param value Value to evaluate.
+     */
+    private static isFile(value: File | string): value is File {
+        return typeof value === 'object'
+            && 'name' in value
+            && 'type' in value;
     }
 }
 

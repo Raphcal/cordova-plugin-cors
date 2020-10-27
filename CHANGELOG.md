@@ -1,9 +1,17 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.1.2] - 2020-11-27
+### Fixed
+- Using `onload` and `onerror` method instead of `addEventListener` to support incomplete `FileReader` implementation, closes [#5](https://github.com/Raphcal/cordova-plugin-cors/issues/5).
+- Added `isFile` method to verify if `FormDataEntryValue` is a `File` instead of using `instanceof` to support custom `File` implementation, closes [#5](https://github.com/Raphcal/cordova-plugin-cors/issues/5).
+
+### Changed
+- `toBase64` method is now static.
+
 ## [1.1.1] - 2020-10-08
 ### Added
-- `User-Agent` HTTP header is now set by default to Cordova user agent.
+- `User-Agent` HTTP header is now set by default to Cordova user agent, closes [#4](https://github.com/Raphcal/cordova-plugin-cors/issues/4).
 
 ### Changed
 - Removed the compiled version of `xhr.ts` from the repository. Build is now done before publishing a new version.
