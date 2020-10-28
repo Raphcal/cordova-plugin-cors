@@ -40,8 +40,8 @@
             NSLog(@"Unsupported data type: %@", data.class);
         }
     }
-    [headers enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *obj, BOOL * _Nonnull stop) {
-        [request setValue:obj forHTTPHeaderField:key];
+    [headers enumerateKeysAndObjectsUsingBlock:^(NSString *key, id obj, BOOL * _Nonnull stop) {
+        [request setValue:[obj stringValue] forHTTPHeaderField:key];
     }];
     
     NSURLSessionDataTask *task = [_session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {

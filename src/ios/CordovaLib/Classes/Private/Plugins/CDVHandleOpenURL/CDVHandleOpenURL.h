@@ -17,18 +17,11 @@
  under the License.
  */
 
-#import "CDVAvailability.h"
-#import "CDVAvailabilityDeprecated.h"
-#import "CDVAppDelegate.h"
-#import "CDVPlugin.h"
-#import "CDVPluginResult.h"
-#import "CDVViewController.h"
-#import "CDVCommandDelegate.h"
-#import "CDVURLProtocol.h"
-#import "CDVInvokedUrlCommand.h"
-#import "CDVWhitelist.h"
-#import "CDVPlugin.h"
-#import "CDVPluginResult.h"
-#import "CDVScreenOrientationDelegate.h"
-#import "CDVTimer.h"
-#import "CDVUserAgentUtil.h"
+#import <Cordova/CDVPlugin.h>
+
+@interface CDVHandleOpenURL : CDVPlugin
+
+@property (nonatomic, strong) NSURL* url;
+@property (nonatomic, assign) BOOL pageLoaded;
+
+@end
