@@ -194,9 +194,9 @@ class XHR extends XHREventTarget implements XMLHttpRequest {
         throw new Error('overrideMimeType method is not supported');
     }
 
-    setRequestHeader(header: string, value?: string) {
-        if (value) {
-            this.requestHeaders[header] = value;
+    setRequestHeader(header: string, value?: string | number) {
+        if (value != null) {
+            this.requestHeaders[header] = `${value}`;
         } else {
             delete this.requestHeaders[header];
         }

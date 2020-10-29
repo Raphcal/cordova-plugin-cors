@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.1.3] - 2020-11-29
+### Added
+- Added support for non string header types.
+
 ## [1.1.2] - 2020-11-27
 ### Fixed
 - Using `onload` and `onerror` method instead of `addEventListener` to support incomplete `FileReader` implementation, closes [#5](https://github.com/Raphcal/cordova-plugin-cors/issues/5).
