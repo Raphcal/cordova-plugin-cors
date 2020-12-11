@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-cors",
-  "version": "1.1.3",
+  "version": "1.2.0",
   "author": {
     "email": "ddaeke-npmjs@yahoo.com",
     "name": "Raphaël Calabro"
@@ -37,7 +37,7 @@
     "url": "https://github.com/Raphcal/cordova-plugin-cors"
   },
   "scripts": {
-    "prepublish": "tsc"
+    "prepare": "tsc"
   },
   "devDependencies": {
       "typescript": "^2.6.2"

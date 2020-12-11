@@ -26,6 +26,7 @@
     NSString *path = [command argumentAtIndex:1];
     NSDictionary *headers = [command argumentAtIndex:2];
     NSObject *data = [command argumentAtIndex:3];
+    NSString *responseType = [command argumentAtIndex:4];
     
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:path]];
     [request setHTTPMethod:method];
@@ -44,43 +45,63 @@
         [request setValue:obj forHTTPHeaderField:key];
     }];
     
-    NSURLSessionDataTask *task = [_session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+    NSURLSessionDataTask *task = [_session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable urlResponse, NSError * _Nullable error) {
         NSNumber *statusCode = @200;
         NSString *statusText = @"OK";
-        NSString *responseText = @"";
+        id response = [NSNull null];
+        id responseText = [NSNull null];
         NSDictionary *headers = @{};
         NSString *allHeaders = @"";
-        
-        if ([response isKindOfClass:NSHTTPURLResponse.class]) {
-            NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+        NSString *contentType = @"";
+
+        if ([urlResponse isKindOfClass:NSHTTPURLResponse.class]) {
+            NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)urlResponse;
             statusCode = [NSNumber numberWithInteger:httpResponse.statusCode];
             statusText = [RCAXMLHttpRequest statusTextForStatusCode:httpResponse.statusCode];
-            
+            contentType = [httpResponse valueForHTTPHeaderField:@"Content-Type"];
+
             NSDictionary *allHeaderFields = httpResponse.allHeaderFields;
             headers = allHeaderFields;
-            
+
             NSMutableArray *headerArray = [[NSMutableArray alloc] initWithCapacity:allHeaderFields.count];
             [allHeaderFields enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *obj, BOOL * _Nonnull stop) {
                 [headerArray addObject:[NSString stringWithFormat:@"%@: %@", key, obj]];
             }];
             allHeaders = [headerArray componentsJoinedByString:@"\r\n"];
         }
-        
-        NSStringEncoding encoding = NSUTF8StringEncoding;
-        if (response.textEncodingName != nil) {
-            encoding = CFStringConvertEncodingToNSStringEncoding(CFStringConvertIANACharSetNameToEncoding((CFStringRef)response.textEncodingName));
+
+        if ([responseType isEqualToString:@"text"]) {
+            NSStringEncoding encoding = NSASCIIStringEncoding;
+            if (urlResponse.textEncodingName != nil) {
+                encoding = CFStringConvertEncodingToNSStringEncoding(CFStringConvertIANACharSetNameToEncoding((CFStringRef)urlResponse.textEncodingName));
+            }
+            responseText = [[NSString alloc] initWithData:data encoding:encoding];
+        } else if ([responseType isEqualToString:@"arraybuffer"]) {
+            NSMutableArray *array = [[NSMutableArray alloc] initWithCapacity:data.length];
+            const uint8_t *bytes = data.bytes;
+            for (NSUInteger index = 0; index < data.length; index++) {
+                [array addObject:[NSNumber numberWithInt:(int)bytes[index]]];
+            }
+            NSError *jsonError;
+            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:array options:0 error:&jsonError];
+            if (jsonError == nil) {
+                response = [[NSString alloc] initWithData:jsonData encoding:NSASCIIStringEncoding];
+            }
+        } else {
+            NSLog(@"Given responseType is not supported: %@", responseType);
         }
-        responseText = [[NSString alloc] initWithData:data encoding:encoding];
-        
+
         [self.commandDelegate sendPluginResult:
          [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
                        messageAsDictionary:@{
                                              @"status": statusCode,
                                              @"statusText": statusText,
+                                             @"response": response,
                                              @"responseText": responseText,
                                              @"responseHeaders": headers,
                                              @"allResponseHeaders": allHeaders
-                                             }] callbackId:command.callbackId];
+                                             }]
+                                    callbackId:command.callbackId];
     }];
     [task resume];
 }

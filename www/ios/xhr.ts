@@ -31,7 +31,8 @@ interface XHRListeners {
 interface XHRResponse {
     status: number;
     statusText: string;
-    responseText: string;
+    response?: string;
+    responseText?: string;
     responseHeaders: {[header: string]: string};
     allResponseHeaders: string;
 }
@@ -113,16 +114,24 @@ class XHR extends XHREventTarget implements XMLHttpRequest {
 
     status = 0;
     statusText: string = null;
-    get response(): any {
-        return this.responseText;
-    }
+    response: any = null;
     responseText: string = null;
     responseXML: Document = null;
+
+    set responseType(responseType: XMLHttpRequestResponseType) {
+        if (this.status >= XHR.LOADING) {
+            throw new DOMException('Object state must be unsent, opened or headers received.', 'InvalidStateError');
+        }
+        this._responseType = responseType.toLowerCase() as XMLHttpRequestResponseType;
+    }
+    get responseType() {
+        return this._responseType;
+    }
+    private _responseType: XMLHttpRequestResponseType = '';
 
     // TODO: Support these.
     timeout = 60;
     withCredentials = false;
-    responseType: '' | 'arraybuffer' | 'blob' | 'document' | 'json' | 'text' = null;
     responseURL: string = null;
     upload: XMLHttpRequestUpload = null;
     msCachingEnabled = () => false;
@@ -173,17 +182,22 @@ class XHR extends XHREventTarget implements XMLHttpRequest {
         promise.then(body => exec((response: XHRResponse) => {
             this.status = response.status;
             this.statusText = response.statusText;
+            this.response = response.responseText;
             this.responseText = response.responseText;
             this.responseHeaders = response.responseHeaders;
             this.allResponseHeaders = response.allResponseHeaders;
             this.readyState = XMLHttpRequest.DONE;
+
+            if (this.responseType === 'arraybuffer') {
+                this.response = new Uint8Array(JSON.parse(response.response)).buffer;
+            }
 
             this.dispatchEvent(new ProgressEvent('load'));
             this.dispatchEvent(new ProgressEvent('loadend'));
         }, (error) => {
             this.dispatchEvent(new ProgressEvent('error'));
             this.readyState = XMLHttpRequest.DONE;
-        }, 'CORS', 'send', [this.method, this.path, this.requestHeaders, body]));
+        }, 'CORS', 'send', [this.method, this.path, this.requestHeaders, body, this._responseType || 'text']));
     }
 
     abort() {

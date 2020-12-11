@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.2.0] - 2021-01-05
+### Added
+- Added support for `arraybuffer` response type.
+
+### Fixed
+- Fixed crash when `responseText` contains binary data, closes [#9](https://github.com/Raphcal/cordova-plugin-cors/issues/9).
+
 ## [1.1.3] - 2020-11-29
 ### Added
 - Added support for non string header types.

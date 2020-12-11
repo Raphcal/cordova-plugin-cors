@@ -17,7 +17,11 @@
  under the License.
  */
 
+#if !TARGET_OS_OSX
 #import <UIKit/UIKit.h>
+#else
+#import "UIKit.h"
+#endif
 #import <Foundation/NSJSONSerialization.h>
 #import "CDVAvailability.h"
 #import "CDVInvokedUrlCommand.h"
@@ -44,6 +48,7 @@
 @property (nonatomic, readonly, strong) NSMutableDictionary* settings;
 @property (nonatomic, readonly, strong) NSXMLParser* configParser;
 
+@property (nonatomic, readwrite, copy) NSString* configFile;
 @property (nonatomic, readwrite, copy) NSString* wwwFolderName;
 @property (nonatomic, readwrite, copy) NSString* startPage;
 @property (nonatomic, readonly, strong) CDVCommandQueue* commandQueue;
@@ -63,6 +68,12 @@
 @property (nonatomic, readwrite, copy) NSString* baseUserAgent;
 
 /**
+	Takes/Gives an array of UIInterfaceOrientation (int) objects
+	ex. UIInterfaceOrientationPortrait
+*/
+@property (nonatomic, readwrite, strong) NSArray* supportedOrientations;
+
+/**
  The address of the lock token used for controlling access to setting the user-agent
  */
 @property (nonatomic, readonly) NSInteger* userAgentLockToken;
@@ -72,6 +83,7 @@
 - (NSString*)appURLScheme;
 - (NSURL*)errorURL;
 
+- (UIColor*)colorFromColorString:(NSString*)colorString;
 - (NSArray*)parseInterfaceOrientations:(NSArray*)orientations;
 - (BOOL)supportsOrientation:(UIInterfaceOrientation)orientation;
 
