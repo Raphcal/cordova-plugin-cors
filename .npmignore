@@ -1,2 +1,6 @@
-src/ios/Lib/
+src/ios/CordovaLib/
+src/ios/RCAXMLHttpRequest.xcodeproj/
+src/ios/RCAXMLHttpRequestTest/
+*.tgz
 *.ts
+tsconfig.json

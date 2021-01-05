@@ -12,6 +12,7 @@
 
 @interface RCAXMLHttpRequest : CDVPlugin
 
+- (void)pluginInitialize;
 - (void)send:(nonnull CDVInvokedUrlCommand *)command;
     
 @end

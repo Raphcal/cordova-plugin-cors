@@ -17,10 +17,9 @@
  under the License.
  */
 
-#import <UIKit/UIKit.h>
-
-#ifdef __clang__
-    #define CDV_DEPRECATED(version, msg) __attribute__((deprecated("Deprecated in Cordova " #version ". " msg)))
+#ifdef DEBUG
+    #define DLog(fmt, ...) NSLog((@"%s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__)
 #else
-    #define CDV_DEPRECATED(version, msg) __attribute__((deprecated()))
+    #define DLog(...)
 #endif
+#define ALog(fmt, ...) NSLog((@"%s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__)

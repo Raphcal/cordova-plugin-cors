@@ -7,33 +7,111 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		64B55B4425248295006F1D30 /* RCAXMLHttpRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 64B55B4225248295006F1D30 /* RCAXMLHttpRequest.h */; };
+		640C3D3C258FE03A00112D4F /* RCAXMLHttpRequestTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 640C3D3B258FE03A00112D4F /* RCAXMLHttpRequestTest.m */; };
+		640C3D5B258FE46100112D4F /* libCordova.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 640C3D4E258FE40D00112D4F /* libCordova.a */; };
+		64ACCB43259CC6C00023D6D1 /* Cordova_macOs.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64ACCAD0259CB7FF0023D6D1 /* Cordova_macOs.framework */; };
+		64ACCB5A259CC8D10023D6D1 /* RCAXMLHttpRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 64B55B4325248295006F1D30 /* RCAXMLHttpRequest.m */; };
+		64ACCB5D259CC8D60023D6D1 /* RCAXMLHttpRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 64B55B4225248295006F1D30 /* RCAXMLHttpRequest.h */; };
+		64B55B4425248295006F1D30 /* RCAXMLHttpRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 64B55B4225248295006F1D30 /* RCAXMLHttpRequest.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		64B55B4525248295006F1D30 /* RCAXMLHttpRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 64B55B4325248295006F1D30 /* RCAXMLHttpRequest.m */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		640C3D4D258FE40D00112D4F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 640C3D48258FE40D00112D4F /* CordovaLib.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 68A32D7114102E1C006B237C;
+			remoteInfo = CordovaLib;
+		};
+		640C3D4F258FE40D00112D4F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 640C3D48258FE40D00112D4F /* CordovaLib.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = C0C01EB21E3911D50056E6CB;
+			remoteInfo = Cordova;
+		};
+		64ACCACF259CB7FF0023D6D1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 640C3D48258FE40D00112D4F /* CordovaLib.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 64ACCAC3259CB7C40023D6D1;
+			remoteInfo = "Cordova macOs";
+		};
+		64ACCB49259CC7310023D6D1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 640C3D48258FE40D00112D4F /* CordovaLib.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 64ACCAC2259CB7C40023D6D1;
+			remoteInfo = "Cordova macOs";
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		640C3D39258FE03A00112D4F /* RCAXMLHttpRequestTest.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RCAXMLHttpRequestTest.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		640C3D3B258FE03A00112D4F /* RCAXMLHttpRequestTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RCAXMLHttpRequestTest.m; sourceTree = "<group>"; };
+		640C3D3D258FE03A00112D4F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		640C3D48258FE40D00112D4F /* CordovaLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CordovaLib.xcodeproj; path = CordovaLib/CordovaLib.xcodeproj; sourceTree = "<group>"; };
 		64B55B3525248268006F1D30 /* RCAXMLHttpRequest.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RCAXMLHttpRequest.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		64B55B4225248295006F1D30 /* RCAXMLHttpRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCAXMLHttpRequest.h; sourceTree = "<group>"; };
 		64B55B4325248295006F1D30 /* RCAXMLHttpRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCAXMLHttpRequest.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		640C3D36258FE03A00112D4F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				64ACCB43259CC6C00023D6D1 /* Cordova_macOs.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		64B55B3225248268006F1D30 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				640C3D5B258FE46100112D4F /* libCordova.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		640C3D3A258FE03A00112D4F /* RCAXMLHttpRequestTest */ = {
+			isa = PBXGroup;
+			children = (
+				640C3D3B258FE03A00112D4F /* RCAXMLHttpRequestTest.m */,
+				640C3D3D258FE03A00112D4F /* Info.plist */,
+			);
+			path = RCAXMLHttpRequestTest;
+			sourceTree = "<group>";
+		};
+		640C3D49258FE40D00112D4F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				640C3D4E258FE40D00112D4F /* libCordova.a */,
+				640C3D50258FE40D00112D4F /* Cordova.framework */,
+				64ACCAD0259CB7FF0023D6D1 /* Cordova_macOs.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		640C3D57258FE45A00112D4F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		64B55B2B25248267006F1D30 = {
 			isa = PBXGroup;
 			children = (
 				64B55B4225248295006F1D30 /* RCAXMLHttpRequest.h */,
 				64B55B4325248295006F1D30 /* RCAXMLHttpRequest.m */,
+				640C3D48258FE40D00112D4F /* CordovaLib.xcodeproj */,
+				640C3D3A258FE03A00112D4F /* RCAXMLHttpRequestTest */,
 				64B55B3625248268006F1D30 /* Products */,
+				640C3D57258FE45A00112D4F /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -41,6 +119,7 @@
 			isa = PBXGroup;
 			children = (
 				64B55B3525248268006F1D30 /* RCAXMLHttpRequest.framework */,
+				640C3D39258FE03A00112D4F /* RCAXMLHttpRequestTest.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -48,6 +127,14 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		640C3D43258FE2E600112D4F /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				64ACCB5D259CC8D60023D6D1 /* RCAXMLHttpRequest.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		64B55B3025248268006F1D30 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -59,6 +146,25 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		640C3D38258FE03A00112D4F /* RCAXMLHttpRequestTest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 640C3D40258FE03A00112D4F /* Build configuration list for PBXNativeTarget "RCAXMLHttpRequestTest" */;
+			buildPhases = (
+				640C3D43258FE2E600112D4F /* Headers */,
+				640C3D35258FE03A00112D4F /* Sources */,
+				640C3D36258FE03A00112D4F /* Frameworks */,
+				640C3D37258FE03A00112D4F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				64ACCB4A259CC7310023D6D1 /* PBXTargetDependency */,
+			);
+			name = RCAXMLHttpRequestTest;
+			productName = RCAXMLHttpRequestTest;
+			productReference = 640C3D39258FE03A00112D4F /* RCAXMLHttpRequestTest.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		64B55B3425248268006F1D30 /* RCAXMLHttpRequest */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 64B55B3D25248268006F1D30 /* Build configuration list for PBXNativeTarget "RCAXMLHttpRequest" */;
@@ -85,6 +191,9 @@
 			attributes = {
 				LastUpgradeCheck = 1200;
 				TargetAttributes = {
+					640C3D38258FE03A00112D4F = {
+						CreatedOnToolsVersion = 12.3;
+					};
 					64B55B3425248268006F1D30 = {
 						CreatedOnToolsVersion = 12.0;
 					};
@@ -101,14 +210,52 @@
 			mainGroup = 64B55B2B25248267006F1D30;
 			productRefGroup = 64B55B3625248268006F1D30 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 640C3D49258FE40D00112D4F /* Products */;
+					ProjectRef = 640C3D48258FE40D00112D4F /* CordovaLib.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				64B55B3425248268006F1D30 /* RCAXMLHttpRequest */,
+				640C3D38258FE03A00112D4F /* RCAXMLHttpRequestTest */,
 			);
 		};
 /* End PBXProject section */
 
+/* Begin PBXReferenceProxy section */
+		640C3D4E258FE40D00112D4F /* libCordova.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libCordova.a;
+			remoteRef = 640C3D4D258FE40D00112D4F /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		640C3D50258FE40D00112D4F /* Cordova.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Cordova.framework;
+			remoteRef = 640C3D4F258FE40D00112D4F /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		64ACCAD0259CB7FF0023D6D1 /* Cordova_macOs.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Cordova_macOs.framework;
+			remoteRef = 64ACCACF259CB7FF0023D6D1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
 /* Begin PBXResourcesBuildPhase section */
+		640C3D37258FE03A00112D4F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		64B55B3325248268006F1D30 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -119,6 +266,15 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		640C3D35258FE03A00112D4F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				64ACCB5A259CC8D10023D6D1 /* RCAXMLHttpRequest.m in Sources */,
+				640C3D3C258FE03A00112D4F /* RCAXMLHttpRequestTest.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		64B55B3125248268006F1D30 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -129,7 +285,51 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		64ACCB4A259CC7310023D6D1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "Cordova macOs";
+			targetProxy = 64ACCB49259CC7310023D6D1 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		640C3D3E258FE03A00112D4F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = RCAXMLHttpRequestTest/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.1;
+				PRODUCT_BUNDLE_IDENTIFIER = fr.rca.RCAXMLHttpRequestTest;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		640C3D3F258FE03A00112D4F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = RCAXMLHttpRequestTest/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.1;
+				PRODUCT_BUNDLE_IDENTIFIER = fr.rca.RCAXMLHttpRequestTest;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
 		64B55B3B25248268006F1D30 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -257,8 +457,6 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				HEADER_SEARCH_PATHS = ./Lib;
-				INFOPLIST_FILE = Cors/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -281,8 +479,6 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				HEADER_SEARCH_PATHS = ./Lib;
-				INFOPLIST_FILE = Cors/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -299,6 +495,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		640C3D40258FE03A00112D4F /* Build configuration list for PBXNativeTarget "RCAXMLHttpRequestTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				640C3D3E258FE03A00112D4F /* Debug */,
+				640C3D3F258FE03A00112D4F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		64B55B2F25248267006F1D30 /* Build configuration list for PBXProject "RCAXMLHttpRequest" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

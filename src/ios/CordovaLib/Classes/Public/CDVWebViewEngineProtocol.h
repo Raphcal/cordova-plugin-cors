@@ -17,7 +17,11 @@
  under the License.
  */
 
+#if !TARGET_OS_OSX
 #import <UIKit/UIKit.h>
+#else
+@class UIView;
+#endif
 
 #define kCDVWebViewEngineScriptMessageHandlers @"kCDVWebViewEngineScriptMessageHandlers"
 #define kCDVWebViewEngineUIWebViewDelegate @"kCDVWebViewEngineUIWebViewDelegate"

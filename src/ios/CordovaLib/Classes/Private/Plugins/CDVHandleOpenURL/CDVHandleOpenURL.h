@@ -17,19 +17,11 @@
  under the License.
  */
 
-#import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
+#import <Cordova/CDVPlugin.h>
 
-@interface NSDictionary (CordovaPreferences)
+@interface CDVHandleOpenURL : CDVPlugin
 
-- (id)cordovaSettingForKey:(NSString*)key;
-- (BOOL)cordovaBoolSettingForKey:(NSString*)key defaultValue:(BOOL)defaultValue;
-- (CGFloat)cordovaFloatSettingForKey:(NSString*)key defaultValue:(CGFloat)defaultValue;
-
-@end
-
-@interface NSMutableDictionary (CordovaPreferences)
-
-- (void)setCordovaSetting:(id)value forKey:(NSString*)key;
+@property (nonatomic, strong) NSURL* url;
+@property (nonatomic, assign) BOOL pageLoaded;
 
 @end
