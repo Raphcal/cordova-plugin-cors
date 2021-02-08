@@ -27,7 +27,7 @@
     NSDictionary *headers = [command argumentAtIndex:2];
     NSObject *data = [command argumentAtIndex:3];
     NSString *responseType = [command argumentAtIndex:4];
-    
+
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:path]];
     [request setHTTPMethod:method];
     if (![data isEqual:[NSNull null]]) {
@@ -44,7 +44,7 @@
     [headers enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *obj, BOOL * _Nonnull stop) {
         [request setValue:obj forHTTPHeaderField:key];
     }];
-    
+
     NSURLSessionDataTask *task = [_session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable urlResponse, NSError * _Nullable error) {
         NSNumber *statusCode = @200;
         NSString *statusText = @"OK";
@@ -58,7 +58,10 @@
             NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)urlResponse;
             statusCode = [NSNumber numberWithInteger:httpResponse.statusCode];
             statusText = [RCAXMLHttpRequest statusTextForStatusCode:httpResponse.statusCode];
-            contentType = [httpResponse valueForHTTPHeaderField:@"Content-Type"];
+
+            if (@available(iOS 13.0, *)) {
+                contentType = [httpResponse valueForHTTPHeaderField:@"Content-Type"];
+            }
 
             NSDictionary *allHeaderFields = httpResponse.allHeaderFields;
             headers = allHeaderFields;
