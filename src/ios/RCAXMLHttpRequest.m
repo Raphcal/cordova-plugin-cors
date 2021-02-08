@@ -58,7 +58,7 @@
             NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)urlResponse;
             statusCode = [NSNumber numberWithInteger:httpResponse.statusCode];
             statusText = [RCAXMLHttpRequest statusTextForStatusCode:httpResponse.statusCode];
-            contentType = [httpResponse valueForHTTPHeaderField:@"Content-Type"];
+            contentType = [httpResponse.allHeaderFields objectForKey:@"Content-Type"];
 
             NSDictionary *allHeaderFields = httpResponse.allHeaderFields;
             headers = allHeaderFields;
