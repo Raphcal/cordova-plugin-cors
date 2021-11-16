@@ -152,6 +152,7 @@ class XHR extends XHREventTarget implements XMLHttpRequest {
     private requestHeaders: {[header: string]: string} = {'User-Agent': navigator.userAgent};
     private responseHeaders: {[header: string]: string} = {};
     private allResponseHeaders: string = null;
+    private mimeType: string = null;
 
     open(method: 'DELETE' | 'GET' | 'HEAD' | 'OPTIONS' | 'POST' | 'PUT' | 'TRACE', path: string) {
         if (this.readyState !== XMLHttpRequest.UNSENT) {
@@ -197,7 +198,7 @@ class XHR extends XHREventTarget implements XMLHttpRequest {
         }, (error) => {
             this.dispatchEvent(new ProgressEvent('error'));
             this.readyState = XMLHttpRequest.DONE;
-        }, 'CORS', 'send', [this.method, this.path, this.requestHeaders, body, this._responseType || 'text']));
+        }, 'CORS', 'send', [this.method, this.path, this.requestHeaders, body, this._responseType || 'text', this.mimeType]));
     }
 
     abort() {
@@ -205,7 +206,7 @@ class XHR extends XHREventTarget implements XMLHttpRequest {
     }
 
     overrideMimeType(mimeType: string) {
-        throw new Error('overrideMimeType method is not supported');
+        this.mimeType = mimeType;
     }
 
     setRequestHeader(header: string, value?: string | number) {

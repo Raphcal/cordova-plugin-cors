@@ -27,6 +27,7 @@
     NSDictionary *headers = [command argumentAtIndex:2];
     NSObject *data = [command argumentAtIndex:3];
     NSString *responseType = [command argumentAtIndex:4];
+    NSString *mimeType = [command argumentAtIndex:5];
     
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:path]];
     [request setHTTPMethod:method];
@@ -52,15 +53,17 @@
         id responseText = [NSNull null];
         NSDictionary *headers = @{};
         NSString *allHeaders = @"";
-        NSString *contentType = @"";
 
         if ([urlResponse isKindOfClass:NSHTTPURLResponse.class]) {
             NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)urlResponse;
             statusCode = [NSNumber numberWithInteger:httpResponse.statusCode];
             statusText = [RCAXMLHttpRequest statusTextForStatusCode:httpResponse.statusCode];
-            contentType = [httpResponse.allHeaderFields objectForKey:@"Content-Type"];
 
-            NSDictionary *allHeaderFields = httpResponse.allHeaderFields;
+            NSMutableDictionary *allHeaderFields = [NSMutableDictionary dictionaryWithDictionary: httpResponse.allHeaderFields];
+            if (mimeType != nil) {
+                [allHeaderFields setObject:mimeType forKey:@"Content-Type"];
+            }
+
             headers = allHeaderFields;
 
             NSMutableArray *headerArray = [[NSMutableArray alloc] initWithCapacity:allHeaderFields.count];
