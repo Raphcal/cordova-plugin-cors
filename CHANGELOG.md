@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.3.0] - 2021-11-17
+### Added
+- Added basic support for overrideMimeType method.
+
 ## [1.2.1] - 2021-02-08
 ### Fixed
 - Replaced call to `valueForHTTPHeaderField` by `allHeaderFields objectForKey:` to allow usage with iOS 12 (and under), fixes [#12](https://github.com/Raphcal/cordova-plugin-cors/issues/12).
